@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Spicy Cubbes Venezuela — Un poquito dulce. Un poquito spicy.",
-  description: "Gomitas de durazno con un toque de ají, hechas para compartir. 1 bolsita, 2 cubos, 1 cita. Envíos discretos en sobre 100% ciego a toda Venezuela.",
-  applicationName: "Spicy Cubbes Venezuela",
+  title: "OxyEnergy Cardo Mariano 80% Silimarina | Desintoxicante Hepático y Digestivo",
+  description: "Desinflama tu abdomen, limpia el hígado graso y reactiva tu energía con OxyEnergy Cardo Mariano 80% Silimarina. 90 cápsulas vegetales. Pago contra entrega en toda Venezuela por Tealca.",
+  applicationName: "OxyEnergy Botanical Clinic",
   robots: { index: true, follow: true },
   openGraph: {
-    title: "Spicy Cubbes — Un par. Un plan.",
-    description: "Dos cubitos para compartir. Envíos discretos y atención directa por WhatsApp en toda Venezuela.",
+    title: "OxyEnergy Cardo Mariano 80% Silimarina | 90 Cápsulas",
+    description: "Tratamiento botánico clínico para el hígado y digestión pesada. Paga solo al recibir en mano por Tealca en toda Venezuela.",
     locale: "es_VE",
     type: "website",
   },
@@ -37,7 +36,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           />
         </noscript>
       </head>
-      <body className="font-sans antialiased">
+      <body className="antialiased selection:bg-[#1b3320] selection:text-white">
         {children}
       </body>
     </html>

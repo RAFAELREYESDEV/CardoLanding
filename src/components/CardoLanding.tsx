@@ -168,10 +168,15 @@ export default function CardoLanding() {
     touchEndX.current = 0;
   };
 
-  // Sticky bar scroll trigger
+  const ctaButtonRef = useRef<HTMLDivElement>(null);
+
+  // Sticky bar inteligente: solo se activa cuando el botón principal de compra sale de la pantalla hacia arriba
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 340) {
+      if (!ctaButtonRef.current) return;
+      const rect = ctaButtonRef.current.getBoundingClientRect();
+      // Si el botón principal ya pasó por encima del viewport (rect.bottom < 0)
+      if (rect.bottom < 0) {
         setShowStickyBar(true);
       } else {
         setShowStickyBar(false);
@@ -286,11 +291,11 @@ export default function CardoLanding() {
         </div>
       </aside>
 
-      {/* 2. Cabecera Minimalista */}
+      {/* 2. Cabecera Minimalista (Sin botón de pedir invasivo al inicio) */}
       <header className="sticky top-0 z-40 bg-[#faf8f5]/95 backdrop-blur-md border-b border-[#eae3d7]">
-        <div className="max-w-5xl mx-auto px-3 sm:px-4 h-13 md:h-16 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-lg sm:text-2xl font-serif font-bold tracking-tight text-[#1b3320]">
+            <span className="text-xl sm:text-2xl font-serif font-bold tracking-tight text-[#1b3320]">
               OXYENERGY<span className="text-emerald-700">.</span>
             </span>
             <span className="hidden md:inline-block text-[11px] text-[#736a5f] border-l border-[#dcd3c5] pl-3 tracking-widest uppercase">
@@ -298,29 +303,21 @@ export default function CardoLanding() {
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-[#2f5536] font-medium bg-[#eef5ee] border border-[#d2e4d0] px-3 py-1 rounded-full">
+              <span>🚚</span>
+              <span>Pagas al Recibir por Tealca</span>
+            </div>
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hola, tengo dudas sobre el Cardo Mariano OxyEnergy antes de ordenar.")}`}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Atención por WhatsApp"
-              className="text-xs font-semibold text-[#1f3823] hover:text-[#325938] flex items-center gap-1 px-2.5 py-1.5 rounded-full border border-[#d8cfbf] hover:bg-[#f1ebe0] transition-colors"
+              className="text-xs font-semibold text-[#1f3823] hover:text-[#325938] flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#d8cfbf] hover:bg-[#f1ebe0] transition-colors"
             >
               <span>💬</span>
-              <span className="hidden md:inline">¿Dudas?</span>
-              <span className="hidden sm:inline">WhatsApp</span>
+              <span className="text-xs font-medium">WhatsApp</span>
             </a>
-
-            <button
-              onClick={() => openCheckout()}
-              style={{ color: "#ffffff", backgroundColor: "#1b3320" }}
-              className="hover:bg-[#132617] !text-white text-xs font-bold py-1.5 px-3 sm:px-4 rounded-full shadow-xs transition-all flex items-center gap-1 cursor-pointer shrink-0"
-            >
-              <span style={{ color: "#ffffff" }} className="!text-white font-bold">
-                Pedir<span className="hidden sm:inline"> al Recibir</span>
-              </span>
-              <span style={{ color: "#ffffff" }}>→</span>
-            </button>
           </div>
         </div>
       </header>
@@ -423,8 +420,8 @@ export default function CardoLanding() {
               </button>
             </div>
 
-            {/* 4 Miniaturas */}
-            <div className="grid grid-cols-4 gap-2">
+            {/* 4 Miniaturas Limpias */}
+            <div className="grid grid-cols-4 gap-1.5 md:gap-2">
               {galleryImages.map((img, idx) => (
                 <button
                   key={idx}
@@ -439,81 +436,53 @@ export default function CardoLanding() {
                 </button>
               ))}
             </div>
-
-            {/* Caja de Confianza y Seguridad */}
-            <div className="bg-[#f3efe8] rounded-xl p-3 border border-[#e2d9cd] text-xs text-[#4a4238] space-y-1">
-              <div className="flex items-center gap-1.5 font-bold text-[#1b3320]">
-                <span>🛡️</span>
-                <span>PAGO AL RECIBIR • CERO RIESGO</span>
-              </div>
-              <ul className="space-y-0.5 pl-4 list-disc text-[11px] leading-tight text-[#574e44]">
-                <li><strong>No pagas ahora:</strong> Cancela en tus manos al recibir tu paquete.</li>
-                <li><strong>Un operador te llamará:</strong> Te contactaremos por WhatsApp para validar tu envío.</li>
-                <li><strong>Despacho por Tealca:</strong> Directo a tu dirección o a la agencia Tealca que elijas.</li>
-              </ul>
-            </div>
           </div>
 
-          {/* Columna Derecha: Título, Micro-beneficios, Combos y Botón Principal */}
-          <div className="md:col-span-6 space-y-3.5">
+          {/* Columna Derecha: Información Esencial, Selección y Compra */}
+          <div className="md:col-span-6 space-y-4">
             
-            {/* Alerta de Actividad en Vivo */}
-            <div className="inline-flex items-center gap-1.5 bg-[#eef7ec] border border-[#cbe6c8] px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] text-[#1c4521] font-medium shadow-2xs max-w-full flex-wrap">
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
-              </span>
-              <span><strong>14 personas</strong> viendo hoy</span>
-              <span>•</span>
-              <span>Envíos activos por <strong>Tealca</strong></span>
-            </div>
-
-            {/* Título & Rating */}
-            <div className="space-y-1">
+            {/* Título & Valoración */}
+            <div className="space-y-1.5">
               <div className="flex items-center gap-2 text-xs font-medium text-[#6b6255]">
-                <div className="flex text-amber-500">★★★★★</div>
-                <span className="font-bold text-[#2d2925]">4.9 / 5</span>
+                <div className="flex text-amber-500 text-xs">★★★★★</div>
+                <span className="font-bold text-[#2d2925]">4.9</span>
                 <span>•</span>
-                <span>+1,280 clientes satisfechos en Venezuela</span>
+                <span className="text-[#665e52]">+1,280 opiniones en Venezuela</span>
               </div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#2f5c36] block">
-                PROTECTOR Y DESINTOXICANTE HEPÁTICO
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#2f5c36] block">
+                FÓRMULA HEPÁTICA • 80% SILIMARINA PURA
               </span>
               <h1 className="text-xl md:text-2xl font-serif font-bold text-[#1b3320] leading-tight">
-                Cardo Mariano 80% Silimarina con Inositol y Cúrcuma (90 Cápsulas)
+                Cardo Mariano con Inositol y Cúrcuma (90 Cápsulas)
               </h1>
-              <p className="text-xs text-[#574f45] leading-relaxed">
-                Extracto puro estandarizado de 300 mg para descongestionar el hígado graso, desinflamar el abdomen y depurar toxinas de forma natural.
+              <p className="text-xs text-[#5a5247] leading-relaxed">
+                Extracto botánico estandarizado de 300 mg para descongestionar el hígado graso, eliminar la pesadez estomacal y regenerar células hepáticas.
               </p>
             </div>
 
-            {/* Micro-beneficios (4 Puntos Clave) */}
-            <div className="grid grid-cols-2 gap-2 text-[11px] text-[#332e27] bg-[#f5f1eb] p-2.5 rounded-xl border border-[#e5decfa3]">
-              <div className="flex items-center gap-1.5">
-                <span className="text-emerald-700 font-bold">✓</span>
-                <span>Desinflama abdomen pesado</span>
+            {/* 3 Beneficios Clave (Diseño limpio y espacioso) */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-[#332e27]">
+              <div className="flex items-center gap-2 bg-[#f4efe8] p-2 rounded-lg border border-[#e8dfd2]">
+                <span className="text-emerald-700 font-bold text-sm">✓</span>
+                <span className="text-[11px] leading-tight font-medium">Desinflama vientre y pesadez</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-emerald-700 font-bold">✓</span>
-                <span>Limpia toxinas hepáticas</span>
+              <div className="flex items-center gap-2 bg-[#f4efe8] p-2 rounded-lg border border-[#e8dfd2]">
+                <span className="text-emerald-700 font-bold text-sm">✓</span>
+                <span className="text-[11px] leading-tight font-medium">Depura grasa y toxinas</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-emerald-700 font-bold">✓</span>
-                <span>1 cápsula al día (90 días)</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-emerald-700 font-bold">✓</span>
-                <span>Despacho seguro por Tealca</span>
+              <div className="flex items-center gap-2 bg-[#f4efe8] p-2 rounded-lg border border-[#e8dfd2]">
+                <span className="text-emerald-700 font-bold text-sm">✓</span>
+                <span className="text-[11px] leading-tight font-medium">1 cápsula al día (90 dosis)</span>
               </div>
             </div>
 
             {/* Selector de Paquetes */}
-            <div className="space-y-2">
+            <div className="space-y-2 pt-1">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-bold uppercase tracking-wider text-[#38322a]">
-                  Selecciona tu tratamiento:
+                <span className="font-bold uppercase tracking-wider text-[#38322a] text-[11px]">
+                  Elige tu tratamiento:
                 </span>
-                <span className="font-semibold text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded-md text-[10px]">
+                <span className="font-semibold text-emerald-800 bg-[#e7f2e5] border border-[#cbe3c8] px-2 py-0.5 rounded-full text-[10px]">
                   Pagas al Recibir en Mano
                 </span>
               </div>
@@ -541,7 +510,7 @@ export default function CardoLanding() {
                       )}
 
                       <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-start gap-2 min-w-0">
+                        <div className="flex items-start gap-2.5 min-w-0">
                           <div
                             className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${
                               isSelected ? "border-[#1b3320] bg-[#1b3320]" : "border-[#a89e90] bg-white"
@@ -580,15 +549,15 @@ export default function CardoLanding() {
               </div>
             </div>
 
-            {/* BOTÓN PRINCIPAL DE COMPRA (Alto contraste: Blanco puro sobre verde bosque) */}
-            <div className="space-y-2 pt-1">
+            {/* BOTÓN PRINCIPAL DE COMPRA (Ubicación lógica: justo después de elegir el combo) */}
+            <div ref={ctaButtonRef} className="space-y-2 pt-1">
               <button
                 onClick={() => openCheckout()}
                 style={{ color: "#ffffff", backgroundColor: "#1b3320" }}
                 className="w-full hover:bg-[#132617] active:scale-[0.98] animate-cta-shimmer !text-white text-sm md:text-base font-bold py-3.5 px-5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span style={{ color: "#ffffff" }} className="!text-white font-bold tracking-wide">
-                  PEDIR AHORA – PAGO AL RECIBIR
+                  PEDIR CON PAGO AL RECIBIR
                 </span>
                 <span className="text-base">📦</span>
               </button>
@@ -596,10 +565,10 @@ export default function CardoLanding() {
               {/* Sellos de Confianza Rápidos */}
               <div className="flex items-center justify-center gap-3 text-[11px] text-[#524b42] text-center flex-wrap">
                 <span className="flex items-center gap-1">
-                  <span className="text-emerald-700 font-bold">✓</span> No pagas ahora
+                  <span className="text-emerald-700 font-bold">✓</span> Pagas solo al recibir en mano
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="text-emerald-700 font-bold">✓</span> Un operador te contactará
+                  <span className="text-emerald-700 font-bold">✓</span> Validación previa por WhatsApp
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="text-emerald-700 font-bold">✓</span> Envíos por Tealca
@@ -609,12 +578,12 @@ export default function CardoLanding() {
 
             {/* Respaldo de Doctora Especialista */}
             <div className="border border-[#e2d8ca] bg-white rounded-xl p-3 flex gap-3 items-center shadow-2xs">
-              <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-[#1b3320]/20">
+              <div className="relative w-11 h-11 rounded-full overflow-hidden shrink-0 border-2 border-[#1b3320]/20">
                 <Image
                   src="/doctora/doctora_venezolana_sentada.jpg"
                   alt="Dra. Especialista en Salud Hepática"
                   fill
-                  sizes="48px"
+                  sizes="44px"
                   className="object-cover"
                 />
               </div>
@@ -623,7 +592,7 @@ export default function CardoLanding() {
                   Criterio Médico Especializado:
                 </span>
                 <p className="italic leading-snug text-[11px]">
-                  «El 80% de los pacientes que sienten pesadez constante o vientre abultado tras comer tienen congestión biliar. La Silimarina pura al 80% estimula la síntesis de los hepatocitos para acelerar la eliminación de toxinas.»
+                  «El 80% de las personas que sienten pesadez constante o abdomen abultado tienen sobrecarga biliar. La Silimarina pura al 80% estimula la regeneración hepática y la eliminación de toxinas.»
                 </p>
               </div>
             </div>
@@ -969,7 +938,9 @@ export default function CardoLanding() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Atención al cliente por WhatsApp"
-        className="fixed bottom-20 md:bottom-6 right-4 z-40 bg-[#25D366] hover:bg-[#20ba59] text-white p-3 rounded-full shadow-lg transition-transform hover:scale-105 flex items-center gap-2"
+        className={`fixed right-4 z-40 bg-[#25D366] hover:bg-[#20ba59] text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 ${
+          showStickyBar ? "bottom-20" : "bottom-6"
+        }`}
       >
         <span className="text-lg">💬</span>
         <span className="hidden sm:inline text-xs font-bold tracking-wide">

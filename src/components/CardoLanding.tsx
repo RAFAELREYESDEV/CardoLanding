@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 // WhatsApp comercial de atencin y confirmacin de pedidos
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_STORE_WHATSAPP || "584241154804";
@@ -1181,6 +1182,16 @@ export default function CardoLanding() {
           </div>
         </div>
       )}
+
+      {/* Botón flotante para simular vista móvil en Desktop */}
+      <Link
+        href="/preview"
+        className="fixed bottom-6 left-6 z-40 hidden md:flex items-center gap-2.5 bg-[#1b3320] hover:bg-[#132617] text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-2xl border border-white/20 transition-all hover:scale-105 cursor-pointer backdrop-blur-md"
+        title="Ver simulación exacta en iPhone / Android"
+      >
+        <span className="text-base">📱</span>
+        <span>Simular Vista Móvil</span>
+      </Link>
 
     </div>
   );

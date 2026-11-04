@@ -39,13 +39,13 @@ const PACK_OPTIONS = [
   {
     id: "pack_2",
     title: "Combo Recomendado (2 Frascos)",
-    subtitle: "Tratamiento Completo de 6 Meses • 180 Cápsulas",
+    subtitle: "Tratamiento Completo de 6 Meses • 2do Frasco con 50% OFF",
     price: 29.99,
     originalPrice: 40.00,
-    savings: "Ahorras $10.01",
+    savings: "2do Frasco al 50% OFF (Ahorras $10.01)",
     shipping: "ENVÍO GRATIS POR TEALCA A TODA VENEZUELA",
     recommended: true,
-    badge: "MÁS POPULAR • ENVÍO GRATIS",
+    badge: "🔥 2DO FRASCO AL 50% DE DESCUENTO • MÁS ELEGIDO",
     bottles: 2,
     capsules: 180,
     dailyCost: "$0.16 al día"
@@ -70,7 +70,7 @@ const PACK_OPTIONS = [
     subtitle: "Tratamiento Extendido de 9 Meses • 270 Cápsulas",
     price: 39.99,
     originalPrice: 60.00,
-    savings: "Ahorras $20.01",
+    savings: "Pagas 2 y el 3ero casi de regalo (Ahorras $20.01)",
     shipping: "ENVÍO GRATIS POR TEALCA A TODA VENEZUELA",
     recommended: false,
     badge: "MÁXIMO AHORRO",
@@ -98,6 +98,34 @@ export default function CardoLanding() {
   });
   const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Pop-up 50% OFF en 2do frasco y Modales Legales
+  const [showDiscountModal, setShowDiscountModal] = useState(false);
+  const [hasShownDiscountModal, setHasShownDiscountModal] = useState(false);
+  const [activeLegalModal, setActiveLegalModal] = useState<"terms" | "disclaimer" | "shipping" | "guide" | null>(null);
+
+  // Pop-up con el 50% de descuento en la 2da unidad (Exit-intent en PC y Timer de 24s en móvil)
+  useEffect(() => {
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 15 && !hasShownDiscountModal && !isCheckoutOpen) {
+        setShowDiscountModal(true);
+        setHasShownDiscountModal(true);
+      }
+    };
+
+    const timer = setTimeout(() => {
+      if (!hasShownDiscountModal && !isCheckoutOpen) {
+        setShowDiscountModal(true);
+        setHasShownDiscountModal(true);
+      }
+    }, 24000);
+
+    document.addEventListener("mouseleave", handleMouseLeave);
+    return () => {
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      clearTimeout(timer);
+    };
+  }, [hasShownDiscountModal, isCheckoutOpen]);
 
   // Las 4 imágenes seleccionadas por el usuario
   // La imagen seleccionada (carousel_1_selected.jpg) es SIEMPRE la primera (index 0)
@@ -658,28 +686,54 @@ export default function CardoLanding() {
           </div>
         </section>
 
-        {/* 5. SECCIÓN: MODO DE USO Y RESULTADOS */}
-        <section className="bg-white rounded-2xl p-4 md:p-6 border border-[#e8e1d5] shadow-xs space-y-4">
+        {/* 5. SECCIÓN: GUÍA CLÍNICA DE USO, TIEMPO DE EFECTO Y HONESTIDAD MÉDICA */}
+        <section className="bg-white rounded-2xl p-4 md:p-6 border border-[#e8e1d5] shadow-xs space-y-5">
           <div className="text-center max-w-xl mx-auto space-y-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-[#2e5934]">
-              GUÍA MÉDICA DE USO
+              TRANSPARENCIA Y PROTOCOLO MÉDICO
             </span>
             <h2 className="text-lg md:text-xl font-serif font-bold text-[#1b3320]">
-              Modo de Uso: 1 Sola Cápsula al Día
+              Guía de Uso: 1 Cápsula Diaria y Expectativas Reales
             </h2>
             <p className="text-xs text-[#675f54]">
-              Sencillo, diario y diseñado para no irritar tu sistema digestivo.
+              Protocolo botánico seguro, progresivo y diseñado para resultados duraderos sin efecto rebote.
             </p>
           </div>
 
+          {/* Bloque de Honestidad Clínica: El producto NO actúa de inmediato */}
+          <div className="bg-[#fcf8f0] border-l-4 border-amber-600 p-3.5 sm:p-4 rounded-xl space-y-2 text-xs text-[#4a4136]">
+            <div className="flex items-center gap-2 text-amber-900 font-bold text-xs sm:text-sm">
+              <span className="text-base">⚠️</span>
+              <span>Honestidad Clínica: El Cardo Mariano NO hace efecto de la noche a la mañana</span>
+            </div>
+            <p className="leading-relaxed text-[11px] sm:text-xs text-[#554b3e]">
+              El hígado graso y la congestión biliar se desarrollaron durante meses o años por malos hábitos y toxinas acumuladas. La <strong>Silimarina activa pura al 80%</strong> no es un laxante instantáneo ni un fármaco químico agresivo: actúa a nivel celular estimulando la síntesis de proteínas para <strong>reconstruir y regenerar los hepatocitos</strong>. Por este motivo, los beneficios son <strong>progresivos y acumulativos</strong>.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-[11px]">
+              <div className="bg-white/90 p-2.5 rounded-lg border border-[#e8dfcf] space-y-0.5">
+                <strong className="block text-[#1b3320]">Días 1 a 14 (Alivio Digestivo):</strong>
+                <p className="text-[#635b50] leading-snug">Disminuye la pesadez tras comer, reduce los gases y desinflama el vientre abultado.</p>
+              </div>
+              <div className="bg-white/90 p-2.5 rounded-lg border border-[#e8dfcf] space-y-0.5">
+                <strong className="block text-[#1b3320]">Días 15 a 45 (Filtrado Biliar):</strong>
+                <p className="text-[#635b50] leading-snug">El flujo de bilis se descongestiona. Despiertas con más energía y mayor claridad mental.</p>
+              </div>
+              <div className="bg-white/90 p-2.5 rounded-lg border border-[#e8dfcf] space-y-0.5">
+                <strong className="block text-[#1b3320]">Meses 2 a 6 (Regeneración Hepática):</strong>
+                <p className="text-[#635b50] leading-snug">Metabolismo de grasas normalizado y limpieza profunda. <em>Por eso se recomienda el tratamiento de 2 frascos (6 meses)</em>.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 3 Pasos del Protocolo de Uso */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="bg-[#faf8f5] rounded-xl p-3.5 border border-[#eae2d5] text-center space-y-1">
               <div className="w-8 h-8 mx-auto rounded-full bg-[#eef5ed] text-[#1b3320] font-bold text-xs flex items-center justify-center">
                 1
               </div>
-              <h3 className="font-bold text-xs text-[#1e1a17]">1 Cápsula Diaria</h3>
+              <h3 className="font-bold text-xs text-[#1e1a17]">1 Sola Cápsula al Día</h3>
               <p className="text-[11px] text-[#61594f] leading-snug">
-                Dosis clínica concentrada (300 mg al 80% Silimarina). Sin batidos amargos ni horarios difíciles.
+                Dosis clínica concentrada (300 mg al 80% Silimarina). Suficiente para 24 horas continuas de protección celular.
               </p>
             </div>
 
@@ -689,7 +743,7 @@ export default function CardoLanding() {
               </div>
               <h3 className="font-bold text-xs text-[#1e1a17]">Con Desayuno o Almuerzo</h3>
               <p className="text-[11px] text-[#61594f] leading-snug">
-                Tómala junto a tu comida principal con un vaso de agua para máxima asimilación biliar.
+                Tómala junto a una comida con un vaso de agua completo (250 ml). La presencia de alimentos activa el vaciamiento biliar y facilita su absorción.
               </p>
             </div>
 
@@ -697,32 +751,28 @@ export default function CardoLanding() {
               <div className="w-8 h-8 mx-auto rounded-full bg-[#eef5ed] text-[#1b3320] font-bold text-xs flex items-center justify-center">
                 3
               </div>
-              <h3 className="font-bold text-xs text-[#1e1a17]">90 Días por Frasco</h3>
+              <h3 className="font-bold text-xs text-[#1e1a17]">Hidratación de Apoyo</h3>
               <p className="text-[11px] text-[#61594f] leading-snug">
-                Cada frasco contiene 90 cápsulas vegetales. 3 meses enteros de protección hepática continua.
+                Toma al menos 2 litros de agua durante el día. El agua es el vehículo necesario para que tus riñones eliminen las toxinas que el hígado va liberando.
               </p>
             </div>
           </div>
 
-          {/* Timeline de Resultados */}
-          <div className="bg-[#f8f5ee] rounded-xl p-3.5 border border-[#e6ded2] text-xs space-y-2">
-            <h4 className="font-bold text-xs text-[#1b3320] text-center">
-              Evolución progresiva semana a semana:
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 text-[#524b41]">
-              <div className="border-l-2 border-emerald-600 pl-2.5 space-y-0.5">
-                <span className="font-bold text-[#1b3320] block text-xs">Semana 1: Alivio Abdominal</span>
-                <p className="text-[11px]">Disminuye la distensión después de comer y la pesadez en el estómago.</p>
-              </div>
-              <div className="border-l-2 border-emerald-600 pl-2.5 space-y-0.5">
-                <span className="font-bold text-[#1b3320] block text-xs">Semanas 2 a 4: Energía Matutina</span>
-                <p className="text-[11px]">Mejor filtrado nocturno de toxinas. Te despiertas con mayor claridad y agilidad.</p>
-              </div>
-              <div className="border-l-2 border-emerald-600 pl-2.5 space-y-0.5">
-                <span className="font-bold text-[#1b3320] block text-xs">Meses 2 y 3: Regeneración Hepática</span>
-                <p className="text-[11px]">Descongestión biliar sostenida, metabolismo de grasas optimizado y piel más limpia.</p>
-              </div>
+          {/* Qué evitar durante el tratamiento */}
+          <div className="bg-[#faf8f5] rounded-xl p-3 border border-[#ebe3d6] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#524a3f]">
+            <div className="space-y-0.5 text-center sm:text-left">
+              <span className="font-bold text-[#1b3320] block">Pautas para maximizar tu inversión:</span>
+              <p className="text-[11px] text-[#696155]">
+                Modera el consumo de bebidas alcohólicas y alimentos ultraprocesados para no sobrecargar el hígado mientras la silimarina hace su trabajo regenerador.
+              </p>
             </div>
+            <button
+              type="button"
+              onClick={() => setActiveLegalModal("guide")}
+              className="text-[11px] font-bold text-[#1b3320] bg-white border border-[#cfc4b2] px-3 py-1.5 rounded-lg hover:bg-[#f2ece1] transition-colors shrink-0 cursor-pointer"
+            >
+              Ver Guía Completa de Uso 📄
+            </button>
           </div>
         </section>
 
@@ -906,29 +956,64 @@ export default function CardoLanding() {
 
       </main>
 
-      {/* 9. FOOTER MINIMALISTA */}
-      <footer className="mt-12 bg-[#1b3320] text-[#e8e2d8] text-xs py-6 px-4 border-t border-[#294a2f]">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
-          <div className="space-y-0.5">
-            <span className="text-sm font-serif font-bold text-white tracking-wide">
-              OXYENERGY BOTANICAL CLINIC
+      {/* 9. FOOTER CON MARCO LEGAL, TÉRMINOS Y DESCARGO MÉDICO */}
+      <footer className="mt-12 bg-[#1b3320] text-[#e8e2d8] text-xs py-8 px-4 border-t border-[#294a2f] space-y-5">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left border-b border-[#294a2f] pb-6">
+          <div className="space-y-1">
+            <span className="text-sm font-serif font-bold text-white tracking-wide block">
+              OXYENERGY BOTANICAL CLINIC VENEZUELA
             </span>
             <p className="text-[11px] text-[#b6ab9a]">
-              Suplementos botánicos certificados • Despachos garantizados a toda Venezuela por Tealca.
+              Suplementos botánicos estandarizados bajo normas GMP • Despacho garantizado por Tealca.
             </p>
           </div>
-          <div className="flex items-center gap-3 text-xs text-white">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-white">
+            <button
+              type="button"
+              onClick={() => setActiveLegalModal("disclaimer")}
+              className="text-[#cde4cb] hover:text-white underline cursor-pointer text-[11px]"
+            >
+              Aviso Médico Legal
+            </button>
+            <span>•</span>
+            <button
+              type="button"
+              onClick={() => setActiveLegalModal("terms")}
+              className="text-[#cde4cb] hover:text-white underline cursor-pointer text-[11px]"
+            >
+              Términos de Compra
+            </button>
+            <span>•</span>
+            <button
+              type="button"
+              onClick={() => setActiveLegalModal("shipping")}
+              className="text-[#cde4cb] hover:text-white underline cursor-pointer text-[11px]"
+            >
+              Políticas de Envío Tealca
+            </button>
+            <span>•</span>
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hola, necesito atención al cliente sobre OxyEnergy.")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white hover:text-emerald-300 font-medium underline"
+              className="text-white hover:text-emerald-300 font-semibold underline text-[11px]"
             >
-              Atención por WhatsApp
+              Soporte WhatsApp
             </a>
-            <span>•</span>
-            <span>Pago Contra Entrega por Tealca</span>
           </div>
+        </div>
+
+        {/* Descargo de Responsabilidad Médica Canónico */}
+        <div className="max-w-5xl mx-auto space-y-2 text-[10px] text-[#938a7c] leading-relaxed">
+          <p>
+            <strong>Descargo de Responsabilidad Médica:</strong> Las afirmaciones sobre este extracto botánico de Cardo Mariano (80% Silimarina) no han sido evaluadas por la FDA ni por el Instituto Nacional de Higiene como medicamento curativo. Este producto es un suplemento nutricional coadyuvante y no pretende diagnosticar, tratar, mitigar ni curar ninguna patología grave de forma aislada. Los resultados pueden variar según el metabolismo y adherencia de cada persona.
+          </p>
+          <p>
+            <strong>Contraindicaciones:</strong> No utilizar en mujeres embarazadas, en período de lactancia ni en menores de 18 años sin supervisión de un médico especialista. En caso de padecer obstrucción biliar grave o alergia a plantas de la familia Asteraceae, consulte previamente a su gastroenterólogo.
+          </p>
+          <p className="text-center md:text-left text-[#7e7669] pt-2">
+            © {new Date().getFullYear()} OxyEnergy Venezuela. Despachos realizados a través de la red oficial de encomiendas Tealca en modalidad Pago Contra Entrega.
+          </p>
         </div>
       </footer>
 
@@ -1150,6 +1235,199 @@ export default function CardoLanding() {
               </p>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* 13. POP-UP DE CORTESÍA: 50% DE DESCUENTO EN EL 2DO FRASCO */}
+      {showDiscountModal && !isCheckoutOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+          <div className="bg-[#faf8f5] w-full max-w-md rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-2 border-emerald-700/30 p-5 space-y-4 relative">
+            <button
+              onClick={() => setShowDiscountModal(false)}
+              className="absolute top-3 right-3 text-[#7a7164] hover:text-[#221e1a] text-lg font-bold w-8 h-8 rounded-full bg-[#eee7db] flex items-center justify-center cursor-pointer"
+            >
+              ✕
+            </button>
+
+            <div className="text-center space-y-1.5 pt-1">
+              <span className="inline-block bg-[#eef7ec] text-[#1c4521] border border-[#cbe6c8] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
+                🎁 OFERTA ESPECIAL DE CORTESÍA
+              </span>
+              <h3 className="text-lg md:text-xl font-serif font-bold text-[#1b3320] leading-tight">
+                ¡Llévate tu 2do Frasco con 50% de Descuento!
+              </h3>
+              <p className="text-xs text-[#5e564b] leading-relaxed">
+                El hígado no se descongestiona de un día para otro. Los especialistas recomiendan <strong>6 meses continuos</strong> para regenerar el tejido hepático y evitar recaídas.
+              </p>
+            </div>
+
+            {/* Tarjeta de la Oferta */}
+            <div className="bg-white p-3.5 rounded-xl border-2 border-[#1b3320] shadow-xs space-y-2">
+              <div className="flex justify-between items-center">
+                <div>
+                  <span className="font-bold text-xs sm:text-sm text-[#1e1a17] block">
+                    Tratamiento Completo (2 Frascos)
+                  </span>
+                  <span className="text-[11px] text-emerald-800 font-semibold">
+                    180 Cápsulas • 6 Meses de Protección
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-base font-bold text-[#1b3320] block">
+                    $29.99 USD
+                  </span>
+                  <span className="text-[11px] text-[#8c8273] line-through block">
+                    $40.00 USD
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-[#f0ebd2] space-y-1 text-[11px] text-[#4d453b]">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-emerald-700 font-bold">✓</span>
+                  <span><strong>2do Frasco al 50% OFF</strong> ($10 en vez de $20)</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-emerald-700 font-bold">✓</span>
+                  <span><strong>Envío 100% GRATIS</strong> por Tealca a toda Venezuela</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-emerald-700 font-bold">✓</span>
+                  <span><strong>Pagas al recibir en mano</strong> (Efectivo $ o Pago Móvil)</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-1">
+              <button
+                onClick={() => {
+                  setSelectedPack(PACK_OPTIONS[0]); // Combo 2 frascos
+                  setShowDiscountModal(false);
+                  setIsCheckoutOpen(true);
+                }}
+                style={{ color: "#ffffff", backgroundColor: "#1b3320" }}
+                className="w-full hover:bg-[#132617] active:scale-95 animate-cta-shimmer !text-white text-xs sm:text-sm font-bold py-3.5 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span style={{ color: "#ffffff" }} className="!text-white font-bold">
+                  APLICAR 50% OFF Y PEDIR 2 FRASCOS ($29.99)
+                </span>
+                <span className="text-sm">→</span>
+              </button>
+
+              <button
+                onClick={() => setShowDiscountModal(false)}
+                className="w-full text-center text-[11px] text-[#82786a] hover:text-[#3d372e] py-1 cursor-pointer"
+              >
+                No gracias, prefiero pagar precio individual más adelante
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 14. MODAL DE INFORMACIÓN LEGAL Y POLÍTICAS */}
+      {activeLegalModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-[#faf8f5] w-full max-w-lg rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-[#ded5c7] max-h-[90vh] flex flex-col">
+            
+            {/* Header del Modal Legal */}
+            <div className="bg-[#1b3320] text-white p-3.5 px-5 flex justify-between items-center shrink-0">
+              <h3 className="font-bold text-sm md:text-base text-white">
+                {activeLegalModal === "disclaimer" && "Aviso Médico y Descargo Legal"}
+                {activeLegalModal === "terms" && "Términos y Condiciones de Compra"}
+                {activeLegalModal === "shipping" && "Políticas de Envío Contra Entrega Tealca"}
+                {activeLegalModal === "guide" && "Guía Clínica y Protocolo de Uso"}
+              </h3>
+              <button
+                onClick={() => setActiveLegalModal(null)}
+                className="text-white/80 hover:text-white text-xl p-1 leading-none cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Contenido con scroll */}
+            <div className="p-5 overflow-y-auto space-y-4 text-xs text-[#4b4339] leading-relaxed">
+              
+              {activeLegalModal === "disclaimer" && (
+                <div className="space-y-3">
+                  <h4 className="font-bold text-[#1b3320] text-sm">Naturaleza del Producto:</h4>
+                  <p>
+                    OxyEnergy Cardo Mariano (80% Silimarina) es un suplemento dietético formulado con extractos botánicos de alta pureza. No es un medicamento farmacéutico ni sustituye el tratamiento médico prescrito.
+                  </p>
+                  <h4 className="font-bold text-[#1b3320] text-sm">Tiempo de Acción Progresivo:</h4>
+                  <p>
+                    Los componentes botánicos como la Silimarina, el Inositol y la Cúrcuma actúan de forma acumulativa y gradual a nivel celular. No generan efectos inmediatos ni mágicos. Se recomienda un uso ininterrumpido de 3 a 6 meses para consolidar la depuración hepática y evitar recaídas.
+                  </p>
+                  <h4 className="font-bold text-[#1b3320] text-sm">Contraindicaciones:</h4>
+                  <p>
+                    No debe ser consumido por mujeres en período de gestación o lactancia, ni por menores de 18 años. Personas con diagnóstico de litiasis vesicular severa (cálculos biliares obstructivos) deben consultar a su médico tratante antes de su consumo.
+                  </p>
+                </div>
+              )}
+
+              {activeLegalModal === "terms" && (
+                <div className="space-y-3">
+                  <h4 className="font-bold text-[#1b3320] text-sm">Modalidad Pago Contra Entrega (COD):</h4>
+                  <p>
+                    La solicitud realizada a través de esta plataforma no requiere pagos previos por internet. El cliente formaliza su solicitud voluntaria de compra comprometiéndose a recibir y cancelar el monto exacto acordado en el momento de la entrega física.
+                  </p>
+                  <h4 className="font-bold text-[#1b3320] text-sm">Verificación Telefónica Obligatoria:</h4>
+                  <p>
+                    Para garantizar la entrega efectiva y evitar fraudes o errores de dirección, un operador de nuestro equipo se comunicará por llamada telefónica o WhatsApp para confirmar los datos antes de emitir la guía de Tealca. Pedidos no confirmados no serán despachados.
+                  </p>
+                  <h4 className="font-bold text-[#1b3320] text-sm">Métodos de Cancelación al Recibir:</h4>
+                  <p>
+                    Al recibir por Tealca (en mano o en oficina), el comprador puede cancelar en Dólares en Efectivo ($ USD Cash), Pago Móvil en Bolívares liquidado a la tasa oficial, o Binance USDT previa coordinación.
+                  </p>
+                </div>
+              )}
+
+              {activeLegalModal === "shipping" && (
+                <div className="space-y-3">
+                  <h4 className="font-bold text-[#1b3320] text-sm">Cobertura Nacional por Tealca:</h4>
+                  <p>
+                    Los envíos se realizan desde nuestra megabodega central en Caracas hacia cualquier estado de Venezuela a través de la empresa de encomiendas Tealca, ya sea para entrega a domicilio o retiro en la oficina Tealca más cercana.
+                  </p>
+                  <h4 className="font-bold text-[#1b3320] text-sm">Tiempos Estimados de Entrega:</h4>
+                  <p>
+                    Caracas y Gran Caracas: 24 a 48 horas hábiles tras la confirmación telefónica. Resto del país: 48 a 72 horas hábiles con número de guía oficial rastreable en línea.
+                  </p>
+                  <h4 className="font-bold text-[#1b3320] text-sm">Garantía de Recepción Segura:</h4>
+                  <p>
+                    Cada frasco cuenta con sello de seguridad hermético original de fábrica. Si el paquete presenta roturas o daños atribuibles al transporte, el comprador tiene derecho a la reposición inmediata sin costo adicional.
+                  </p>
+                </div>
+              )}
+
+              {activeLegalModal === "guide" && (
+                <div className="space-y-3">
+                  <h4 className="font-bold text-[#1b3320] text-sm">Protocolo Diario Recomendado:</h4>
+                  <ul className="list-disc pl-4 space-y-1">
+                    <li><strong>Dosis:</strong> 1 cápsula vegetal diaria.</li>
+                    <li><strong>Momento:</strong> Durante el desayuno o el almuerzo para una digestión óptima.</li>
+                    <li><strong>Líquido:</strong> 1 vaso grande de agua (250 ml).</li>
+                  </ul>
+                  <h4 className="font-bold text-[#1b3320] text-sm">Pilares de Éxito:</h4>
+                  <p>
+                    Para potenciar el efecto depurador de la silimarina, mantén una ingesta de al menos 2 litros de agua diarios, modera los fritos, harinas ultraprocesadas y el licor, y prioriza un descanso nocturno de 7 horas.
+                  </p>
+                </div>
+              )}
+
+              <div className="pt-2 text-center">
+                <button
+                  type="button"
+                  onClick={() => setActiveLegalModal(null)}
+                  style={{ color: "#ffffff", backgroundColor: "#1b3320" }}
+                  className="px-5 py-2 !text-white font-bold rounded-xl text-xs cursor-pointer hover:bg-[#132617]"
+                >
+                  Entendido y Cerrar
+                </button>
+              </div>
+
+            </div>
           </div>
         </div>
       )}

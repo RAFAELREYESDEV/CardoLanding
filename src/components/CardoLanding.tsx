@@ -113,12 +113,13 @@ export default function CardoLanding() {
       }
     };
 
+    // Timer de cortesía a los 5 segundos con animación suave
     const timer = setTimeout(() => {
       if (!hasShownDiscountModal && !isCheckoutOpen) {
         setShowDiscountModal(true);
         setHasShownDiscountModal(true);
       }
-    }, 24000);
+    }, 5000);
 
     document.addEventListener("mouseleave", handleMouseLeave);
     return () => {
@@ -1239,10 +1240,10 @@ export default function CardoLanding() {
         </div>
       )}
 
-      {/* 13. POP-UP DE CORTESÍA: 50% DE DESCUENTO EN EL 2DO FRASCO */}
+      {/* 13. POP-UP DE CORTESÍA: 50% DE DESCUENTO EN EL 2DO FRASCO (Aparición suave a los 5s) */}
       {showDiscountModal && !isCheckoutOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
-          <div className="bg-[#faf8f5] w-full max-w-md rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-2 border-emerald-700/30 p-5 space-y-4 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-backdrop-fade">
+          <div className="bg-[#faf8f5] w-full max-w-md rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-2 border-emerald-700/30 p-5 space-y-4 relative animate-modal-pop">
             <button
               onClick={() => setShowDiscountModal(false)}
               className="absolute top-3 right-3 text-[#7a7164] hover:text-[#221e1a] text-lg font-bold w-8 h-8 rounded-full bg-[#eee7db] flex items-center justify-center cursor-pointer"

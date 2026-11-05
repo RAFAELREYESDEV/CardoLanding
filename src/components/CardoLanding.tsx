@@ -215,6 +215,19 @@ export default function CardoLanding() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Evento Canonico Meta Pixel: ViewContent al entrar a la landing del producto
+  useEffect(() => {
+    if (typeof window !== "undefined" && (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq) {
+      (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "ViewContent", {
+        content_name: "OxyEnergy Cardo Mariano 80% Silimarina",
+        content_category: "Salud Hepatica y Digestiva",
+        content_ids: ["cardo_mariano_90cap"],
+        value: 29.99,
+        currency: "USD"
+      });
+    }
+  }, []);
+
   const openCheckout = (pack = selectedPack) => {
     setSelectedPack(pack);
     setIsCheckoutOpen(true);
